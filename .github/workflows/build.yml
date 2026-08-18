@@ -14,7 +14,7 @@ jobs:
 
       - name: Unpack the project zip
         run: |
-          unzip -q -o "marketing fundas (3).zip" -d .
+          unzip -q -o "marketingfundas (3).zip" -d .
           ls
           ls package.json android/gradlew
 
