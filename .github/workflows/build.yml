@@ -1,0 +1,45 @@
+name: Build APK
+
+on: [push, workflow_dispatch]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Unpack the project zip
+        run: |
+          unzip -q -o "marketing fundas (3).zip" -d .
+          ls
+          ls package.json android/gradlew
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: android-actions/setup-android@v3
+
+      - run: npm ci
+
+      - name: Build the APK
+        run: cd android && ./gradlew assembleRelease --no-daemon --stacktrace
+
+      - name: Name the APK
+        run: cp android/app/build/outputs/apk/release/app-release.apk marketing-fundas-v1.0.0.apk
+
+      - name: Publish it as a Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: Marketing Fundas v1.0.0
+          files: marketing-fundas-v1.0.0.apk
